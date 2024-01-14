@@ -18,7 +18,7 @@ import java.io.Closeable;
  * <p>
  * The java Plist lib handles converting xml plists to a nested {@code Map<String, Object>}
  * that can be trivially read from java. It also provides a simple way to convert a nested
- * {@code Map<String, Object>} into an xml plist representation.
+ * {@code Map<String, Object>} into a xml plist representation.
  * <p>
  * The following mapping will be done when converting from plist to <tt>Map</tt>:
  * <pre>
@@ -39,7 +39,7 @@ import java.io.Closeable;
  * byte[] -> data
  * List -> array
  * Map -> dict
- * </pre> 
+ * </pre>
  *
  * @author Christoffer Lerno
  */
@@ -53,7 +53,7 @@ public final class Plist
 	/**
 	 * All element types possible for a plist.
 	 */
-	private static enum ElementType
+	private enum ElementType
 	{
 		INTEGER,
 		STRING,
@@ -93,13 +93,11 @@ public final class Plist
      */
     public static String toPlist(Object o)
     {
-        StringBuilder builder = new StringBuilder(
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                 "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" " +
                 "\"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n" +
-                "<plist version=\"1.0\">");
-        builder.append(PLIST.objectToXml(o).toXml());
-        return builder.append("</plist>").toString();
+                "<plist version=\"1.0\">" + PLIST.objectToXml(o).toXml() +
+                "</plist>";
     }
 
 	/**
@@ -230,7 +228,7 @@ public final class Plist
 	/**
 	 * Create a nested {@code map<String, Object>} from a plist xml file using the default mapping.
 	 *
-	 * @param file the File containing the the plist xml.
+	 * @param file the File containing the plist xml.
 	 * @return the resulting map as read from the plist data.
 	 * @throws XmlParseException if the plist could not be properly parsed.
 	 * @throws IOException if there was an issue reading the plist file.
@@ -243,7 +241,7 @@ public final class Plist
     /**
      * Create an object from a plist xml file using the default mapping.
      *
-     * @param file the File containing the the plist xml.
+     * @param file the File containing the plist xml.
      * @return the resulting object as read from the plist data.
      * @throws XmlParseException if the plist could not be properly parsed.
      * @throws IOException if there was an issue reading the plist file.
@@ -256,7 +254,7 @@ public final class Plist
 	/**
 	 * Create a nested {@code map<String, Object>} from a plist xml file using the default mapping.
 	 *
-	 * @param filename the file containing the the plist xml.
+	 * @param filename the file containing the plist xml.
 	 * @return the resulting map as read from the plist data.
 	 * @throws XmlParseException if the plist could not be properly parsed.
 	 * @throws IOException if there was an issue reading the plist file.
@@ -269,7 +267,7 @@ public final class Plist
     /**
      * Create an object from a plist xml file using the default mapping.
      *
-     * @param filename the file containing the the plist xml.
+     * @param filename the file containing the plist xml.
      * @return the resulting object as read from the plist data.
      * @throws XmlParseException if the plist could not be properly parsed.
      * @throws IOException if there was an issue reading the plist file.
@@ -289,7 +287,6 @@ public final class Plist
 		m_simpleTypes = new HashMap<Class, ElementType>();
 		m_simpleTypes.put(Integer.class, ElementType.INTEGER);
 		m_simpleTypes.put(Byte.class, ElementType.INTEGER);
-		m_simpleTypes.put(Short.class, ElementType.INTEGER);
 		m_simpleTypes.put(Short.class, ElementType.INTEGER);
 		m_simpleTypes.put(Long.class, ElementType.INTEGER);
 		m_simpleTypes.put(String.class, ElementType.STRING);
@@ -440,29 +437,17 @@ public final class Plist
 	private Object parseElementRaw(XmlElement element) throws Exception
 	{
 		ElementType type = ElementType.valueOf(element.getName().toUpperCase());
-		switch (type)
-		{
-			case INTEGER:
-				return parseInt(element.getValue());
-			case REAL:
-				return Double.valueOf(element.getValue());
-			case STRING:
-				return element.getValue();
-			case DATE:
-				return m_dateFormat.parse(element.getValue());
-			case DATA:
-				return base64decode(element.getValue());
-			case ARRAY:
-				return parseArray(element);
-			case TRUE:
-				return Boolean.TRUE;
-			case FALSE:
-				return Boolean.FALSE;
-			case DICT:
-				return parseDict(element);
-			default:
-				throw new RuntimeException("Unexpected type: " + element.getName());
-		}
+        return switch (type) {
+            case INTEGER -> parseInt(element.getValue());
+            case REAL -> Double.valueOf(element.getValue());
+            case STRING -> element.getValue();
+            case DATE -> m_dateFormat.parse(element.getValue());
+            case DATA -> base64decode(element.getValue());
+            case ARRAY -> parseArray(element);
+            case TRUE -> Boolean.TRUE;
+            case FALSE -> Boolean.FALSE;
+            case DICT -> parseDict(element);
+        };
 	}
 
 	/**

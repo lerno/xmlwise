@@ -116,7 +116,7 @@ public class Xmlwise
 	}
 
 	/**
-	 * Escapes a string to be used in an xml document.
+	 * Escapes a string to be used in a xml document.
 	 * <p>
 	 * The following replacements are made:
 	 * <p>
@@ -129,7 +129,7 @@ public class Xmlwise
 	 * </table>
 	 *
 	 * @param stringToEscape the string to escape.
-	 * @return an escaped string suitable for use in an xml document.
+	 * @return an escaped string suitable for use in a xml document.
 	 */
 	public static String escapeXML(String stringToEscape)
 	{
@@ -200,6 +200,6 @@ public class Xmlwise
 		return new XmlElement(createDocument(xml).getDocumentElement());
 	}
 
-  
+
 
 }
