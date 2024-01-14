@@ -5,6 +5,8 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 
 import java.util.LinkedList;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * A simplified XML Element that only has an attribute map, a list of sub elements a text value and
@@ -14,7 +16,6 @@ import java.util.LinkedList;
  *
  * @author Christoffer Lerno
  */
-@SuppressWarnings({"serial"})
 public class XmlElement extends LinkedList<XmlElement>
 {
 	private final XmlElementAttributes m_attributes;
@@ -119,7 +120,7 @@ public class XmlElement extends LinkedList<XmlElement>
 	 *
 	 * @param attribute the name of the attribute.
 	 * @return the double value of the attribute.
-	 * @throws XmlParseException if we fail to parse this attribute as an double, or the attribute is missing.
+	 * @throws XmlParseException if we fail to parse this attribute as a double, or the attribute is missing.
 	 */
 	public double getDoubleAttribute(String attribute) throws XmlParseException
 	{
@@ -127,12 +128,12 @@ public class XmlElement extends LinkedList<XmlElement>
 	}
 
 	/**
-	 * Get an double attribute for this element, defaulting to a default value if the attribute is missing.
+	 * Get a double attribute for this element, defaulting to a default value if the attribute is missing.
 	 *
 	 * @param attribute the name of the attribute.
 	 * @param defaultValue the default value for the attribute, returned if the attribute is missing.
 	 * @return the double value of the attribute or the default value if the attribute is missing.
-	 * @throws XmlParseException if we fail to parse this attribute as an double.
+	 * @throws XmlParseException if we fail to parse this attribute as a double.
 	 */
 	public double getDoubleAttribute(String attribute, double defaultValue) throws XmlParseException
 	{
@@ -164,7 +165,7 @@ public class XmlElement extends LinkedList<XmlElement>
 	}
 
 	/**
-	 * Get an boolean attribute for this element.
+	 * Get a boolean attribute for this element.
 	 * <p>
 	 * "true", "yes" and "y" are all interpreted as true. (Case-independent)
 	 * <p>
@@ -180,7 +181,7 @@ public class XmlElement extends LinkedList<XmlElement>
 	}
 
 	/**
-	 * Get an boolean attribute for this element, defaulting to the default value if missing.
+	 * Get a boolean attribute for this element, defaulting to the default value if missing.
 	 * <p>
 	 * "true", "yes" and "y" are all interpreted as true. (Case-independent)
 	 * <p>
@@ -205,15 +206,9 @@ public class XmlElement extends LinkedList<XmlElement>
 	@SuppressWarnings({"MethodOverloadsMethodOfSuperclass"})
 	public LinkedList<XmlElement> get(String name)
 	{
-		LinkedList<XmlElement> list = new LinkedList<XmlElement>();
-		for (XmlElement element : this)
-		{
-			if (element.getName().equals(name))
-			{
-				list.add(element);
-			}
-		}
-		return list;
+        return this.stream()
+            .filter(element -> element.getName().equals(name))
+            .collect(Collectors.toCollection(LinkedList::new));
 	}
 
 	/**
@@ -261,16 +256,15 @@ public class XmlElement extends LinkedList<XmlElement>
 	/**
 	 * Renders this as XML.
 	 *
-	 * @return an xml string based on this element and its sub-elements.
+	 * @return a xml string based on this element and its sub-elements.
 	 */
 	public String toXml()
 	{
 		StringBuilder builder = new StringBuilder("<").append(m_name);
-		if (m_attributes.size() > 0)
-		{
-			builder.append(m_attributes.toXml());
-		}
-		if (isEmpty() && m_value.length() == 0)
+		if (!m_attributes.isEmpty()) {
+            builder.append(m_attributes.toXml());
+        }
+		if (isEmpty() && m_value.isEmpty())
 		{
 			builder.append("/>");
 		}
@@ -346,11 +340,9 @@ public class XmlElement extends LinkedList<XmlElement>
 
         XmlElement that = (XmlElement) o;
 
-        if (m_attributes != null ? !m_attributes.equals(that.m_attributes) : that.m_attributes != null) return false;
-        if (m_name != null ? !m_name.equals(that.m_name) : that.m_name != null) return false;
-        if (m_value != null ? !m_value.equals(that.m_value) : that.m_value != null) return false;
-
-        return true;
+        if (!Objects.equals(m_attributes, that.m_attributes)) return false;
+        if (!Objects.equals(m_name, that.m_name)) return false;
+        return Objects.equals(m_value, that.m_value);
     }
 
     @Override

@@ -1,12 +1,15 @@
 package xmlwise;
 
+import java.io.Serial;
+
 /**
  * Generic exception when parsing xml.
- * 
+ *
  * @author Christoffer Lerno
  */
 public class XmlParseException extends Exception
 {
+	@Serial
 	private static final long serialVersionUID = -3246260520113823143L;
 
 	public XmlParseException(Throwable cause)

@@ -17,7 +17,6 @@ import java.util.HashMap;
  *
  * @author Christoffer Lerno
  */
-@SuppressWarnings({"serial"})
 public class XmlElementAttributes extends HashMap<String, String>
 {
 
@@ -73,7 +72,7 @@ public class XmlElementAttributes extends HashMap<String, String>
 	 *
 	 * @param attribute the name of the attribute.
 	 * @return the double value of the attribute.
-	 * @throws XmlParseException if we fail to parse this attribute as an double, or the attribute is missing.
+	 * @throws XmlParseException if we fail to parse this attribute as a double, or the attribute is missing.
 	 */
 	public double getDouble(String attribute) throws XmlParseException
 	{
@@ -93,7 +92,7 @@ public class XmlElementAttributes extends HashMap<String, String>
 	}
 
 	/**
-	 * Get an boolean attribute.
+	 * Get a boolean attribute.
 	 * <p>
 	 * "true", "yes" and "y" are all interpreted as true. (Case-independent)
 	 * <p>
